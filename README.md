@@ -1,109 +1,55 @@
-# Service Template
+# Notification Service
 
-Стандартный шаблон проекта на SpringBoot
+## Overview
+Notification Service is a backend application designed to manage and deliver notifications across various channels. This service provides APIs for creating, scheduling, and tracking notifications, ensuring reliable communication with users.
 
-# Использованные технологии
+## Features
+- **Notification Management:** Create and manage notifications.
+- **Multi-Channel Support:** Deliver notifications via email, SMS, or push notifications.
+- **Scheduling:** Schedule notifications for future delivery.
+- **Delivery Tracking:** Monitor the status of sent notifications.
+- **Swagger Documentation:** Comprehensive API documentation for developers.
 
-* [Spring Boot](https://spring.io/projects/spring-boot) – как основной фрэймворк
-* [PostgreSQL](https://www.postgresql.org/) – как основная реляционная база данных
-* [Redis](https://redis.io/) – как кэш и очередь сообщений через pub/sub
-* [testcontainers](https://testcontainers.com/) – для изолированного тестирования с базой данных
-* [Liquibase](https://www.liquibase.org/) – для ведения миграций схемы БД
-* [Gradle](https://gradle.org/) – как система сборки приложения
-* [Lombok](https://projectlombok.org/) – для удобной работы с POJO классами
-* [MapStruct](https://mapstruct.org/) – для удобного маппинга между POJO классами
+## Getting Started
 
-# База данных
+### Prerequisites
+- Java 11+
+- Docker (optional for containerized deployment)
+- Gradle
 
-* База поднимается в отдельном сервисе [infra](../infra)
-* Redis поднимается в единственном инстансе тоже в [infra](../infra)
-* Liquibase сам накатывает нужные миграции на голый PostgreSql при старте приложения
-* В тестах используется [testcontainers](https://testcontainers.com/), в котором тоже запускается отдельный инстанс
-  postgres
-* В коде продемонстрирована работа как с JdbcTemplate, так и с JPA (Hibernate)
+### Steps
+1. Clone the repository:
+   
+   git clone https://github.com/IvanMatiko/notification_service.git
+   cd notification_service
+2.Build the project: 
 
-# Как начать разработку начиная с шаблона?
+./gradlew build
 
-1. Сначала нужно склонировать этот репозиторий
+3.Run the application: 
 
-```shell
-git clone https://github.com/FAANG-School/ServiceTemplate
-```
+./gradlew bootRun
 
-2. Далее удаляем служебную директорию для git
+4.Optional (Build and run with Docker): 
 
-```shell
-# Переходим в корневую директорию проекта
-cd ServiceTemplate
-rm -rf .git
-```
+docker build -t post-service . docker run -p 8080:8080 post-service
 
-3. Далее нужно создать совершенно пустой репозиторий в github/gitlab
 
-4. Создаём новый репозиторий локально и коммитим изменения
+# API Endpoints
+POST /notifications: Create a new notification.
+GET /notifications/{id}: Retrieve the details of a specific notification.
+PUT /notifications/{id}: Update an existing notification.
+DELETE /notifications/{id}: Cancel a notification.
+GET /notifications: List all notifications with filtering options.
+For detailed API specifications, refer to the Swagger documentation.
 
-```shell
-git init
-git remote add origin <link_to_repo>
-git add .
-git commit -m "<msg>"
-```
+# Technologies Used
+Java: Core programming language.
 
-Готово, можно начинать работу!
+Spring Boot: Framework for backend development.
 
-# Как запустить локально?
+Gradle: Build automation tool.
 
-Сначала нужно развернуть базу данных из директории [infra](../infra)
+Swagger: API documentation.
 
-Далее собрать gradle проект
-
-```shell
-# Нужно запустить из корневой директории, где лежит build.gradle.kts
-gradle build
-```
-
-Запустить jar'ник
-
-```shell
-java -jar build/libs/ServiceTemplate-1.0.jar
-```
-
-Но легче всё это делать через IDE
-
-# Код
-
-RESTful приложения калькулятор с единственным endpoint'ом, который принимает 2 числа и выдает результаты их сложения,
-вычитаяни, умножения и деления
-
-* Обычная трёхслойная
-  архитектура – [Controller](src/main/java/faang/school/notificationservice/controller), [Service](src/main/java/faang/school/notificationservice/service), [Repository](src/main/java/faang/school/notificationservice/repository)
-* Слой Repository реализован и на jdbcTemplate, и на JPA (Hibernate)
-* Написан [GlobalExceptionHandler](src/main/java/faang/school/notificationservice/controller/GlobalExceptionHandler.java)
-  который умеет возвращать ошибки в формате `{"code":"CODE", "message": "message"}`
-* Используется TTL кэширование вычислений
-  в [CalculationTtlCacheService](src/main/java/faang/school/notificationservice/service/cache/CalculationTtlCacheService.java)
-* Реализован простой Messaging через [Redis pub/sub](https://redis.io/docs/manual/pubsub/)
-  * [Конфигурация](src/main/java/faang/school/notificationservice/config/RedisConfig.java) –
-    сетапится [RedisTemplate](https://docs.spring.io/spring-data/redis/docs/current/api/org/springframework/data/redis/core/RedisTemplate.html) –
-    класс, для удобной работы с Redis силами Spring
-  * [Отправитель](src/main/java/faang/school/notificationservice/service/messaging/RedisCalculationPublisher.java) – генерит
-    рандомные запросы и отправляет в очередь
-  * [Получатель](src/main/java/faang/school/notificationservice/service/messaging/RedisCalculationSubscriber.java) –
-    получает запросы и отправляет задачи асинхронно выполняться
-    в [воркер](src/main/java/faang/school/notificationservice/service/worker/CalculationWorker.java)
-
-# Тесты
-
-Написаны только для единственного REST endpoint'а
-* SpringBootTest
-* MockMvc
-* Testcontainers
-* AssertJ
-* JUnit5
-* Parameterized tests
-
-# TODO
-
-* Dockerfile, который подключается к сети запущенной postgres в docker-compose
-* Redis connectivity
-* ...
+Docker: For containerized deployment.
