@@ -1,0 +1,57 @@
+spring:
+  data:
+    redis:
+      port: 6379
+      host: localhost
+      channels:
+        event-start-event-channel: event-start-channel
+        event-start-reminder-event-channel: event-start-reminder-event-channel
+        comment-channel: comment-topic
+        event-start-recommendation-received-channel: recommendation-received-channel
+        goal-completed-channel: goal-completed
+        event-start-achievement-channel: achievement-channel
+        event-start-project-follower-channel: project-follower-channel
+
+
+  mail:
+    host: smtp.mail.ru
+    port: 465
+    username: kenobi_95@mail.ru
+    password: vvqkF2xQ0c4KXytEGqhr
+    message:
+      from: kenobi_95@mail.ru
+      subject: Notification from CorporationX
+    properties:
+      auth: true
+      ssl: true
+      connectiontimeout: 5000
+      timeout: 5000
+      writetimeout: 5000
+
+  messages:
+    basename: messages
+
+server:
+  port: 8083
+
+logging:
+  level:
+    root: info
+
+#Можно зарегистрировать аккаунт без привязки карты. Будет 2 евро на отправку тестовых SMS
+vonage: #https://dashboard.nexmo.com/getting-started/sms
+  from: 18335642316
+  api:
+    key: 3189fb57
+    secret: m5hqJaJ6jVdIfB3t
+
+telegram.bot:
+      name: NotificationBootCamp_Bot
+      token: 7612440919:AAGYLWMB2HKPV2rl3z8W6ggGRiXyJqQ7wng
+
+project-service:
+  host: localhost
+  port: 8082
+user-service:
+  host: localhost
+  port: 8080
